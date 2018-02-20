@@ -17,7 +17,7 @@ Now run `yarn`. Modify `index.js` and run `node index.js`
 node index.js [file] -p [time offset]
 ```
 
-[!preview](screenshots/preview.png)
+![preview](screenshots/preview.png)
 
 ### Animated Preview
 
@@ -31,7 +31,7 @@ node index.js [file] -a
 node index.js [file] -i
 ```
 
-[!inspect](screenshots/inspect.png)
+![inspect](screenshots/inspect.png)
 
 ### Inspect (verbose)
 
@@ -39,4 +39,4 @@ node index.js [file] -i
 node index.js [file] -v
 ```
 
-[!verbose](screenshots/verbose.png)
+![verbose](screenshots/verbose.png)
