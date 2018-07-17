@@ -1,0 +1,18 @@
+{
+  fullname: '/',
+  name: '/',
+  subgroups: {},
+  attributes {
+    CDI: 'Climate Data Interface version 1.7.0 (http://mpimet.mpg.de/cdi)'
+    Conventions: 'CF-1.4'
+    history: '…',
+    _NCProperties: '…'
+    NCO: '4.6.8',
+    nco_openmp_thread_number: 1,
+    CDO: 'Climate Data Interface version 1.7.0 (http://mpimet.mpg.de/cdi)'
+  },
+  unlimited
+  dimensions
+  variable
+  id
+}
