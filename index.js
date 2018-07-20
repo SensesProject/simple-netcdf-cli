@@ -85,14 +85,14 @@ function preview (file, time) {
     Object.keys(dimensions).indexOf(variable) === -1
   )
 
-  const missing = variables[key].attributes.missing_value.value
+  // const missing = variables[key].attributes.missing_value.value
 
   const data = variables[key].readStridedSlice(
     time, 1, 1, // time
     0, height, stride, // lat
     0, width, stride // lon
   )
-  const validData = data.filter(d => d !== missing && d > 0)
+  const validData = data.filter(d => d > 0)
   const max = Math.max(...validData)
   const min = Math.min(...validData)
 
@@ -100,7 +100,7 @@ function preview (file, time) {
     .domain([min, max])
     .range([0, 1])
 
-  console.log(chalk.bold(`${variables[key].attributes.long_name.value} (${variables[key].attributes.units.value})`))
+  // console.log(chalk.bold(`${variables[key].attributes.long_name.value} (${variables[key].attributes.units.value})`))
   console.log(chalk.bold(`time: ${time}`))
   process.stdout.write(`${min} `)
   const legend = ' '.repeat(16 + 1).split('').map((d, i) => i / 16)
@@ -112,7 +112,7 @@ function preview (file, time) {
 
   data.forEach((d, i) => {
     if (i % width === 0) process.stdout.write('\n')
-    if (d === missing) process.stdout.write(' ')
+    // if (d === missing) process.stdout.write(' ')
     else process.stdout.write(chalk.bgHex(interpolateViridis(scale(d)))(' '))
   })
   process.stdout.write('\n')
