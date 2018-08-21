@@ -13,7 +13,16 @@ const options = {
   output: args.indexOf('-o') >= 0 ? +args[args.indexOf('-o') + 1] || `${path}.json` : `${path}.json`
 }
 
-console.log(options)
+const argDMin = args.find(arg => arg.match(/^-dMin=/))
+const argDMax = args.find(arg => arg.match(/^-dMax=/))
+const argTicks = args.find(arg => arg.match(/^-ticks=/))
+
+let domain = argDMin && argDMax ? [+argDMin.split('=')[1], +argDMax.split('=')[1]] : null
+const ticks = argTicks ? +argTicks.split('=')[1] : null
+
+fs.writeFile('/Users/fidelthomet/Desktop/debug.json', JSON.stringify(process.argv), err => {
+  if (err) throw errs
+})
 
 let file = null
 try {
@@ -32,16 +41,19 @@ const timestep = (timesteps + options.timestep) % timesteps
 const data = getData(file, [[0, 0], [720 - 1, 360 - 1]], [timestep, timestep], meta)
 const flat = data.reduce((a, b) => a.concat(b), []).filter(d => d !== null).reduce((a, b) => a.concat(b), []).filter(d => d !== null)
 
-const domain = [Math.min(...flat), Math.max(...flat)]
+if (domain === null) {
+  domain = [Math.min(...flat), Math.max(...flat)]
+}
 
 const scale = scaleLinear()
   .domain(domain)
   // .range(domain)
   .nice()
 
-const ticks = scale.ticks(8)
+const niceTicks = scale.ticks(ticks || 8)
+scale.range([0, niceTicks.length])
 
-scale.range([0, ticks.length])
+console.log(domain, niceTicks.length)
 
 const niceDomain = scale.domain()
 
@@ -70,17 +82,15 @@ fs.writeFile(options.output, JSON.stringify(out, null, 2), err => {
 
 function getData (file, bbox, time, meta) {
   const variable = meta.variables.find(v =>
-    meta.dimensions.find(d => d.name === v.name) === undefined
+    // meta.dimensions.find(d => d.name === v.name) === undefined
+    v.name === 'tas'
   )
 
   const na = [variable.attributes._FillValue, variable.attributes.missing_value]
-  console.log(na)
 
   const timeSize = time[1] - time[0]
   const lonSize = bbox[1][0] - bbox[0][0]
   const latSize = bbox[1][1] - bbox[0][1]
-
-  console.log(timeSize, lonSize, latSize)
 
   const data = []
 
@@ -90,7 +100,7 @@ function getData (file, bbox, time, meta) {
       const slices = [
         [timeIndex, 1],
         [latIndex, 1],
-        [bbox[0][1], lonSize + 1]
+        [bbox[0][1], lonSize + 1],
       ]
       const values = file.root.variables[variable.name].readSlice(...slices.reduce((a, b) => a.concat(b), []))
       lonData.push(Array.prototype.slice.call(values).map(d => (d === na[0] || d === na[1]) ? null : d))
